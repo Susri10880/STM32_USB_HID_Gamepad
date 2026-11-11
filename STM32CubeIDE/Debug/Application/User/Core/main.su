@@ -1,5 +1,0 @@
-T:/STM32_Workspace/Joystick_read/Core/Src/main.c:67:5:main	8	static
-T:/STM32_Workspace/Joystick_read/Core/Src/main.c:121:6:SystemClock_Config	88	static
-T:/STM32_Workspace/Joystick_read/Core/Src/main.c:168:13:MX_ADC1_Init	24	static
-T:/STM32_Workspace/Joystick_read/Core/Src/main.c:229:13:MX_GPIO_Init	56	static
-T:/STM32_Workspace/Joystick_read/Core/Src/main.c:376:6:Error_Handler	4	static,ignoring_inline_asm

@@ -1,5 +1,0 @@
-T:/STM32_Workspace/Joystick_read/Core/Src/main.c:67:5:main	1
-T:/STM32_Workspace/Joystick_read/Core/Src/main.c:121:6:SystemClock_Config	3
-T:/STM32_Workspace/Joystick_read/Core/Src/main.c:168:13:MX_ADC1_Init	4
-T:/STM32_Workspace/Joystick_read/Core/Src/main.c:229:13:MX_GPIO_Init	1
-T:/STM32_Workspace/Joystick_read/Core/Src/main.c:376:6:Error_Handler	1
