@@ -59,6 +59,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define CS_I2C_SPI_Pin GPIO_PIN_3
 #define CS_I2C_SPI_GPIO_Port GPIOE
+#define SW1_Pin GPIO_PIN_6
+#define SW1_GPIO_Port GPIOE
 #define PC14_OSC32_IN_Pin GPIO_PIN_14
 #define PC14_OSC32_IN_GPIO_Port GPIOC
 #define PC15_OSC32_OUT_Pin GPIO_PIN_15
@@ -81,6 +83,8 @@ void Error_Handler(void);
 #define SPI1_MISO_GPIO_Port GPIOA
 #define SPI1_MOSI_Pin GPIO_PIN_7
 #define SPI1_MOSI_GPIO_Port GPIOA
+#define SW2_Pin GPIO_PIN_5
+#define SW2_GPIO_Port GPIOC
 #define BOOT1_Pin GPIO_PIN_2
 #define BOOT1_GPIO_Port GPIOB
 #define CLK_IN_Pin GPIO_PIN_10

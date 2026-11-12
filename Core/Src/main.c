@@ -16,10 +16,16 @@
   ******************************************************************************
   */
 //	Rank	ADC channel	STM32 pin	Joystick input
+//  -----------------------------------------------
 //	1		Channel 1	PA1			Joystick 1 – X
 //	2		Channel 2	PA2			Joystick 1 – Y
 //	3		Channel 8	PB0			Joystick 2 – X
 //	4		Channel 9	PB1			Joystick 2 – Y
+
+//	Pin	 		Mode			Pull
+//  -------------------------------------
+//	PE6(SW1)	GPIO Input		Pull-up
+//	PC5(SW2)	GPIO Input		Pull-up
 
 
 /* USER CODE END Header */
@@ -29,7 +35,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,11 +57,13 @@
 ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN PV */
-volatile uint32_t joystick1_x = 0;
-volatile uint32_t joystick1_y = 0;
+volatile uint16_t joystick1_x = 0;
+volatile uint16_t joystick1_y = 0;
+volatile bool sw_1 = false;
 
-volatile uint32_t joystick2_x = 0;
-volatile uint32_t joystick2_y = 0;
+volatile uint16_t joystick2_x = 0;
+volatile uint16_t joystick2_y = 0;
+volatile bool sw_2 =false;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -130,6 +138,10 @@ int main(void)
 	  joystick2_y = HAL_ADC_GetValue(&hadc1);
 
 	  HAL_ADC_Stop(&hadc1);
+
+	  sw_1 = (HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin) == GPIO_PIN_RESET);
+	  sw_2 = (HAL_GPIO_ReadPin(SW2_GPIO_Port, SW2_Pin) == GPIO_PIN_RESET);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -221,7 +233,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_1; //pin PA1
+  sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = 1;
   sConfig.SamplingTime = ADC_SAMPLETIME_84CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
@@ -231,7 +243,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_2; //pin PA2
+  sConfig.Channel = ADC_CHANNEL_2;
   sConfig.Rank = 2;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -240,7 +252,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_8; //pin PB0
+  sConfig.Channel = ADC_CHANNEL_8;
   sConfig.Rank = 3;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -249,7 +261,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_9; //pin PB1
+  sConfig.Channel = ADC_CHANNEL_9;
   sConfig.Rank = 4;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -298,6 +310,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(CS_I2C_SPI_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : SW1_Pin */
+  GPIO_InitStruct.Pin = SW1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(SW1_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pin : OTG_FS_PowerSwitchOn_Pin */
   GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -334,6 +352,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : SW2_Pin */
+  GPIO_InitStruct.Pin = SW2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(SW2_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : BOOT1_Pin */
   GPIO_InitStruct.Pin = BOOT1_Pin;
