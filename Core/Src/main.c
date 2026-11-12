@@ -36,6 +36,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
+#include "usbd_hid.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -64,6 +65,8 @@ volatile bool sw_1 = false;
 volatile uint16_t joystick2_x = 0;
 volatile uint16_t joystick2_y = 0;
 volatile bool sw_2 =false;
+
+uint8_t joystick_report[9]; //9 byte usb report buffer
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -141,6 +144,62 @@ int main(void)
 
 	  sw_1 = (HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin) == GPIO_PIN_RESET);
 	  sw_2 = (HAL_GPIO_ReadPin(SW2_GPIO_Port, SW2_Pin) == GPIO_PIN_RESET);
+
+
+	  while (1)
+	  {
+	      // Start ADC conversion sequence
+	      HAL_ADC_Start(&hadc1);
+
+	      // Read Joystick 1 X
+	      HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+	      joystick1_y = HAL_ADC_GetValue(&hadc1);
+
+	      // Read Joystick 1 Y
+	      HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+	      joystick1_x = HAL_ADC_GetValue(&hadc1);
+
+	      // Read Joystick 2 X
+	      HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+	      joystick2_x = HAL_ADC_GetValue(&hadc1);
+
+	      // Read Joystick 2 Y
+	      HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+	      joystick2_y = HAL_ADC_GetValue(&hadc1);
+
+	      HAL_ADC_Stop(&hadc1);
+
+	      // Read physical switches
+	      sw_1 = (HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin) == GPIO_PIN_RESET);
+	      sw_2 = (HAL_GPIO_ReadPin(SW2_GPIO_Port, SW2_Pin) == GPIO_PIN_RESET);
+
+	      // Pack joystick 1 X
+	      joystick_report[0] = (uint8_t)(joystick1_x & 0xFF);
+	      joystick_report[1] = (uint8_t)(joystick1_x >> 8);
+
+	      // Pack joystick 1 Y
+	      joystick_report[2] = (uint8_t)(joystick1_y & 0xFF);
+	      joystick_report[3] = (uint8_t)(joystick1_y >> 8);
+
+	      // Pack joystick 2 X
+	      joystick_report[4] = (uint8_t)(joystick2_x & 0xFF);
+	      joystick_report[5] = (uint8_t)(joystick2_x >> 8);
+
+	      // Pack joystick 2 Y
+	      joystick_report[6] = (uint8_t)(joystick2_y & 0xFF);
+	      joystick_report[7] = (uint8_t)(joystick2_y >> 8);
+
+	      // Pack two buttons into the final byte
+	      joystick_report[8] =
+	          (sw_1 ? 1U : 0U) |
+	          ((sw_2 ? 1U : 0U) << 1);
+
+	      // Send the 9-byte report to the PC
+	      USBD_HID_SendReport(&hUsbDeviceFS, joystick_report, 9);
+
+	      HAL_Delay(10);
+	  }
+
 
     /* USER CODE END WHILE */
 
